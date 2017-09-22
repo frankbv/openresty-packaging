@@ -19,7 +19,6 @@ lib*-perl/debian/tmp/
 lib*-perl/debian/files
 lib*-perl/debian/debhelper-build-stamp
 lib*-perl/debian/.debhelper/
-upload
 go
 [a-z].txt
 *.upload

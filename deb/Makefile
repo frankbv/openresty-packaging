@@ -41,8 +41,8 @@ zlib-build: | zlib-clean zlib-download
 	tar xf openresty-zlib_$(ZLIB_VER).orig.tar.gz --strip-components=1 -C openresty-zlib
 	cd openresty-zlib \
 		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
+        && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
-	#for f in *.deb; do debsigs --sign=origin -K D5EDEB74 $$f || exit 1; done
 	if [ -f ./upload ]; then ./upload || exit 1; fi
 
 .PHONY: zlib-clean
@@ -65,8 +65,8 @@ pcre-build: | pcre-clean pcre-download
 	tar xf openresty-pcre_$(PCRE_VER).orig.tar.bz2 --strip-components=1 -C openresty-pcre
 	cd openresty-pcre \
 		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
+        && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
-	#for f in openresty-pcre*.deb; do debsigs --sign=origin -K D5EDEB74 $$f || exit 1; done
 	if [ -f ./upload ]; then ./upload || exit 1; fi
 
 .PHONY: pcre-clean
@@ -90,8 +90,8 @@ openssl-build: | openssl-clean openssl-download
 	tar xf openresty-openssl_$(SSL_VER).orig.tar.gz --strip-components=1 -C openresty-openssl
 	cd openresty-openssl \
 		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
+        && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
-	#for f in openresty-openssl*.deb; do debsigs --sign=origin -K D5EDEB74 $$f || exit 1; done
 	if [ -f ./upload ]; then ./upload || exit 1; fi
 
 .PHONY: openssl-debug-download
@@ -107,8 +107,8 @@ openssl-debug-build: | openssl-debug-clean openssl-debug-download
 	tar xf openresty-openssl-debug_$(SSL_VER).orig.tar.gz --strip-components=1 -C openresty-openssl-debug
 	cd openresty-openssl-debug \
 		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
+        && ../frank_changelog.sh \
 		&& debuild -sa $(OPTS) -j$(JOBS)
-	#for f in openresty-openssl-debug*.deb; do debsigs --sign=origin -K D5EDEB74 $$f || exit 1; done
 	if [ -f ./upload ]; then ./upload || exit 1; fi
 
 .PHONY: openssl-clean
@@ -130,8 +130,9 @@ openssl-debug-clean:
 .PHONY: openresty-download
 openresty-download:
 	rm -f *.orig.tar.*
-	wget -nH --cut-dirs=100 --mirror 'https://openresty.org/download/openresty-$(OR_VER).tar.gz'
-	cp openresty-$(OR_VER).tar.gz openresty_$(OR_VER).orig.tar.gz
+	git clone https://github.com/frankbv/openresty.git -b no-sse42-v$(OR_VER) openresty-dl
+	(cd openresty-dl && make)
+	cp openresty-dl/openresty-$(OR_VER).tar.gz openresty_$(OR_VER).orig.tar.gz
 
 .PHONY: openresty-build
 openresty-build: | openresty-clean openresty-download
@@ -140,8 +141,8 @@ openresty-build: | openresty-clean openresty-download
 	tar xf openresty_$(OR_VER).orig.tar.gz --strip-components=1 -C openresty
 	cd openresty \
 		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
+        && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
-	#for f in openresty*.deb; do debsigs --sign=origin -K D5EDEB74 $$f || exit 1; done
 	if [ -f ./upload ]; then ./upload || exit 1; fi
 
 .PHONY: openresty-clean
@@ -151,12 +152,14 @@ openresty-clean:
 	find openresty -maxdepth 1 ! -name 'debian' ! -name 'openresty' -print | xargs rm -rf
 	rm -f openresty*.deb
 	rm -f openresty_*.*
+	rm -rf openresty-dl
 
 .PHONY: openresty-debug-download
 openresty-debug-download:
 	rm -f *.orig.tar.*
-	wget -nH --cut-dirs=100 --mirror 'https://openresty.org/download/openresty-$(OR_VER).tar.gz'
-	cp openresty-$(OR_VER).tar.gz openresty-debug_$(OR_VER).orig.tar.gz
+	git clone https://github.com/frankbv/openresty.git -b no-sse42-v$(OR_VER) openresty-dl
+	(cd openresty-dl && make)
+	cp openresty-dl/openresty-$(OR_VER).tar.gz openresty-debug_$(OR_VER).orig.tar.gz
 
 .PHONY: openresty-debug-build
 openresty-debug-build: | openresty-debug-clean openresty-debug-download
@@ -165,8 +168,8 @@ openresty-debug-build: | openresty-debug-clean openresty-debug-download
 	tar xf openresty-debug_$(OR_VER).orig.tar.gz --strip-components=1 -C openresty-debug
 	cd openresty-debug \
 		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
+        && ../frank_changelog.sh \
 		&& debuild -sa $(OPTS) -j$(JOBS)
-	#for f in openresty-debug*.deb; do debsigs --sign=origin -K D5EDEB74 $$f || exit 1; done
 	if [ -f ./upload ]; then ./upload || exit 1; fi
 
 .PHONY: openresty-debug-clean
@@ -176,12 +179,14 @@ openresty-debug-clean:
 	find openresty-debug -maxdepth 1 ! -name 'debian' ! -name 'openresty-debug' -print | xargs rm -rf
 	rm -f openresty-debug*.deb
 	rm -f openresty-debug_*.*
+	rm -rf openresty-dl
 
 .PHONY: openresty-valgrind-download
 openresty-valgrind-download:
 	rm -f *.orig.tar.*
-	wget -nH --cut-dirs=100 --mirror 'https://openresty.org/download/openresty-$(OR_VER).tar.gz'
-	cp openresty-$(OR_VER).tar.gz openresty-valgrind_$(OR_VER).orig.tar.gz
+	git clone https://github.com/frankbv/openresty.git -b no-sse42-v$(OR_VER) openresty-dl
+	(cd openresty-dl && make)
+	cp openresty-dl/openresty-$(OR_VER).tar.gz openresty-valgrind_$(OR_VER).orig.tar.gz
 
 .PHONY: openresty-valgrind-build
 openresty-valgrind-build: | openresty-valgrind-clean openresty-valgrind-download
@@ -190,8 +195,8 @@ openresty-valgrind-build: | openresty-valgrind-clean openresty-valgrind-download
 	tar xf openresty-valgrind_$(OR_VER).orig.tar.gz --strip-components=1 -C openresty-valgrind
 	cd openresty-valgrind \
 		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
+        && ../frank_changelog.sh \
 		&& debuild -sa $(OPTS) -j$(JOBS)
-	#for f in openresty-valgrind*.deb; do debsigs --sign=origin -K D5EDEB74 $$f || exit 1; done
 	if [ -f ./upload ]; then ./upload || exit 1; fi
 
 .PHONY: openresty-valgrind-clean
@@ -201,6 +206,7 @@ openresty-valgrind-clean:
 	find openresty-valgrind -maxdepth 1 ! -name 'debian' ! -name 'openresty-valgrind' -print | xargs rm -rf
 	rm -f openresty-valgrind*.deb
 	rm -f openresty-valgrind_*.*
+	rm -rf openresty-dl
 
 .PHONY: lemplate-download
 lemplate-download:
@@ -222,8 +228,8 @@ lemplate-build: | lemplate-clean lemplate-download
 	tar xf liblemplate-perl_$(LEMPLATE_VER).orig.tar.gz --strip-components=1 -C liblemplate-perl
 	cd liblemplate-perl \
 		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
+        && ../frank_changelog.sh \
 		&& debuild -sa $(OPTS) -j$(JOBS)
-	#for f in openresty-valgrind*.deb; do debsigs --sign=origin -K D5EDEB74 $$f || exit 1; done
 	if [ -f ./upload ]; then ./upload || exit 1; fi
 
 .PHONY: test-nginx-download
@@ -246,8 +252,8 @@ test-nginx-build: | test-nginx-clean test-nginx-download
 	tar xf libtest-nginx-perl_$(TEST_NGINX_VER).orig.tar.gz --strip-components=1 -C libtest-nginx-perl
 	cd libtest-nginx-perl \
 		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
+        && ../frank_changelog.sh \
 		&& debuild -sa $(OPTS) -j$(JOBS)
-	#for f in openresty-valgrind*.deb; do debsigs --sign=origin -K D5EDEB74 $$f || exit 1; done
 	if [ -f ./upload ]; then ./upload || exit 1; fi
 
 ### Makefile ends here
