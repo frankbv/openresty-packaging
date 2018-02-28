@@ -49,7 +49,7 @@ zlib-build: | zlib-clean zlib-download
         && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
-	dpkg -i debfiles/openresty-zlib*
+	dpkg -i debfiles/openresty-zlib*.deb
 
 .PHONY: zlib-clean
 zlib-clean:
@@ -74,7 +74,7 @@ pcre-build: | pcre-clean pcre-download
         && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
-	dpkg -i debfiles/openresty-pcre*
+	dpkg -i debfiles/openresty-pcre*.deb
 
 .PHONY: pcre-clean
 pcre-clean:
@@ -100,7 +100,7 @@ openssl-build: | openssl-clean openssl-download
         && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
-	dpkg -i debfiles/openresty-openssl*
+	dpkg -i debfiles/openresty-openssl*.deb
 
 .PHONY: openssl-debug-download
 openssl-debug-download:
@@ -118,7 +118,7 @@ openssl-debug-build: | openssl-debug-clean openssl-debug-download
         && ../frank_changelog.sh \
 		&& debuild -sa $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
-	dpkg -i debfiles/openresty-openssl*
+	dpkg -i debfiles/openresty-openssl*.deb
 
 .PHONY: openssl-clean
 openssl-clean:
