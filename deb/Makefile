@@ -32,7 +32,7 @@ clean: zlib-clean pcre-clean openssl-clean openssl-debug-clean \
 .PHONY: dependencies
 dependencies:
 	apt-get install -y libtemplate-perl dh-systemd systemtap-sdt-dev perl gnupg curl make build-essential dh-make bzr-builddeb
-	apt-get install -y autotools-dev sudo dos2unix
+	apt-get install -y autotools-dev sudo dos2unix mercurial
 
 .PHONY: zlib-download
 zlib-download:
