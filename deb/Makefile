@@ -19,7 +19,7 @@ OPTS=
 DISTRO:=$(shell lsb_release -c|awk '{print $$2}')
 
 .PHONY: build
-build: zlib-build pcre-build openssl-build \
+build: dependencies zlib-build pcre-build openssl-build \
 	openssl-debug-build openresty-build openresty-debug-build \
 	openresty-valgrind-build \
 	lemplate-build test-nginx-build
@@ -28,6 +28,11 @@ build: zlib-build pcre-build openssl-build \
 clean: zlib-clean pcre-clean openssl-clean openssl-debug-clean \
 	openresty-clean openresty-debug-clean openresty-valgrind-clean \
 	lemplate-clean test-nginx-clean
+
+.PHONY: dependencies
+dependencies:
+	apt-get install -y libtemplate-perl dh-systemd systemtap-sdt-dev perl gnupg curl make build-essential dh-make bzr-builddeb
+	apt-get install -y autotools-dev sudo dos2unix
 
 .PHONY: zlib-download
 zlib-download:
@@ -44,6 +49,7 @@ zlib-build: | zlib-clean zlib-download
         && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
+	dpkg -i debfiles/openresty-zlib*
 
 .PHONY: zlib-clean
 zlib-clean:
@@ -68,6 +74,7 @@ pcre-build: | pcre-clean pcre-download
         && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
+	dpkg -i debfiles/openresty-pcre*
 
 .PHONY: pcre-clean
 pcre-clean:
@@ -93,6 +100,7 @@ openssl-build: | openssl-clean openssl-download
         && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
+	dpkg -i debfiles/openresty-openssl*
 
 .PHONY: openssl-debug-download
 openssl-debug-download:
@@ -110,6 +118,7 @@ openssl-debug-build: | openssl-debug-clean openssl-debug-download
         && ../frank_changelog.sh \
 		&& debuild -sa $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
+	dpkg -i debfiles/openresty-openssl*
 
 .PHONY: openssl-clean
 openssl-clean:
