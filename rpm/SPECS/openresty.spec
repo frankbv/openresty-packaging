@@ -1,6 +1,6 @@
 Name:           openresty
-Version:        1.11.2.5
-Release:        2%{?dist}
+Version:        1.13.6.1
+Release:        1%{?dist}
 Summary:        OpenResty, scalable web platform by extending NGINX with Lua
 
 Group:          System Environment/Daemons
@@ -141,13 +141,12 @@ This package provides the client side tool, opm, for OpenResty Pakcage Manager (
 %build
 ./configure \
     --prefix="%{orprefix}" \
-    --with-cc-opt="-I%{zlib_prefix}/include -I%{pcre_prefix}/include -I%{openssl_prefix}/include" \
+    --with-cc-opt="-DNGX_LUA_ABORT_AT_PANIC -I%{zlib_prefix}/include -I%{pcre_prefix}/include -I%{openssl_prefix}/include" \
     --with-ld-opt="-L%{zlib_prefix}/lib -L%{pcre_prefix}/lib -L%{openssl_prefix}/lib -Wl,-rpath,%{zlib_prefix}/lib:%{pcre_prefix}/lib:%{openssl_prefix}/lib" \
     --with-pcre-jit \
     --without-http_rds_json_module \
     --without-http_rds_csv_module \
     --without-lua_rds_parser \
-    --with-ipv6 \
     --with-stream \
     --with-stream_ssl_module \
     --with-http_v2_module \
@@ -168,7 +167,7 @@ This package provides the client side tool, opm, for OpenResty Pakcage Manager (
     --with-http_gunzip_module \
     --with-threads \
     --with-file-aio \
-    --with-luajit-xcflags='-DNGX_LUA_ABORT_AT_PANIC -DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT' \
+    --with-luajit-xcflags='-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT' \
     --with-dtrace-probes \
     %{?_smp_mflags}
 
@@ -256,11 +255,13 @@ fi
 
 
 %changelog
-* Thu Sep 21 2017 Yichun Zhang (agentzy) 1.11.2.5-2
+* Sun Nov 12 2017 Yichun Zhang (agentzh) 1.13.6.1-1
+- upgraded openresty to 1.13.6.1.
+* Thu Sep 21 2017 Yichun Zhang (agentzh) 1.11.2.5-2
 - enabled -DNGX_LUA_ABORT_AT_PANIC by default.
-* Thu Aug 17 2017 Yichun Zhang (agentzy) 1.11.2.5-1
+* Thu Aug 17 2017 Yichun Zhang (agentzh) 1.11.2.5-1
 - upgraded OpenResty to 1.11.2.5.
-* Tue Jul 11 2017 Yichun Zhang (agentzy) 1.11.2.4-1
+* Tue Jul 11 2017 Yichun Zhang (agentzh) 1.11.2.4-1
 - upgraded OpenResty to 1.11.2.4.
 * Sat May 27 2017 Yichun Zhang (agentzh) 1.11.2.3-14
 - bugfix: the openresty-opm subpackage did not depend on openresty-doc and openresty-resty.
