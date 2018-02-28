@@ -1,7 +1,7 @@
 #!/bin/bash
 
-DISTRO=$(dpkg-parsechangelog --show-field Distribution)
-CURVER=$(dpkg-parsechangelog --show-field Version)
+DISTRO=`dpkg-parsechangelog | grep "^Distribution" | sed -e "s/^Distribution: //"`
+CURVER=`dpkg-parsechangelog | grep "^Version" | sed -e "s/^Version: //"`
 DEBFULLNAME="Frank IT" DEBEMAIL=it@frank.nl dch \
     -v "${CURVER}.frank1" \
     --distribution=${DISTRO} \
