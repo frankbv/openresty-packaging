@@ -1,5 +1,5 @@
 Name:           openresty
-Version:        1.13.6.1
+Version:        1.15.8.1
 Release:        1%{?dist}
 Summary:        OpenResty, scalable web platform by extending NGINX with Lua
 
@@ -13,18 +13,16 @@ URL:            https://openresty.org/
 Source0:        https://openresty.org/download/openresty-%{version}.tar.gz
 Source1:        openresty.init
 
-#Patch0:         openresty-%{version}.patch
-
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  perl-File-Temp
 BuildRequires:  gcc, make, perl, systemtap-sdt-devel
 BuildRequires:  openresty-zlib-devel >= 1.2.11-3
-BuildRequires:  openresty-openssl-devel >= 1.0.2k-1
-BuildRequires:  openresty-pcre-devel >= 8.40-1
+BuildRequires:  openresty-openssl-devel >= 1.1.0h-1
+BuildRequires:  openresty-pcre-devel >= 8.42-1
 Requires:       openresty-zlib >= 1.2.11-3
-Requires:       openresty-openssl >= 1.0.2k-1
-Requires:       openresty-pcre >= 8.40-1
+Requires:       openresty-openssl >= 1.1.0h-1
+Requires:       openresty-pcre >= 8.42-1
 
 # for /sbin/service
 Requires(post):  chkconfig
@@ -36,6 +34,11 @@ AutoReqProv:        no
 %define zlib_prefix         %{orprefix}/zlib
 %define pcre_prefix         %{orprefix}/pcre
 %define openssl_prefix      %{orprefix}/openssl
+
+%if 0%{?fedora} >= 27
+%undefine _debugsource_packages
+%undefine _debuginfo_subpackages
+%endif
 
 
 %description
@@ -135,8 +138,6 @@ This package provides the client side tool, opm, for OpenResty Pakcage Manager (
 %prep
 %setup -q -n "openresty-%{version}"
 
-#%patch0 -p1
-
 
 %build
 ./configure \
@@ -149,6 +150,7 @@ This package provides the client side tool, opm, for OpenResty Pakcage Manager (
     --without-lua_rds_parser \
     --with-stream \
     --with-stream_ssl_module \
+    --with-stream_ssl_preread_module \
     --with-http_v2_module \
     --without-mail_pop3_module \
     --without-mail_imap_module \
@@ -166,7 +168,6 @@ This package provides the client side tool, opm, for OpenResty Pakcage Manager (
     --with-http_mp4_module \
     --with-http_gunzip_module \
     --with-threads \
-    --with-file-aio \
     --with-luajit-xcflags='-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT' \
     --with-dtrace-probes \
     %{?_smp_mflags}
@@ -255,6 +256,10 @@ fi
 
 
 %changelog
+* Thu May 16 2019 Yichun Zhang (agentzh) 1.15.8.1-1
+- upgraded openresty to 1.15.8.1.
+* Mon May 14 2018 Yichun Zhang (agentzh) 1.13.6.2-1
+- upgraded openresty to 1.13.6.2.
 * Sun Nov 12 2017 Yichun Zhang (agentzh) 1.13.6.1-1
 - upgraded openresty to 1.13.6.1.
 * Thu Sep 21 2017 Yichun Zhang (agentzh) 1.11.2.5-2

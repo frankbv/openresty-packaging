@@ -1,5 +1,5 @@
 Name:           openresty-debug
-Version:        1.13.6.1
+Version:        1.15.8.1
 Release:        1%{?dist}
 Summary:        The debug version of OpenResty
 
@@ -17,11 +17,11 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  perl-File-Temp
 BuildRequires:  gcc, make, perl, systemtap-sdt-devel
 BuildRequires:  openresty-zlib-devel >= 1.2.11-3
-BuildRequires:  openresty-openssl-debug-devel >= 1.0.2k-1
-BuildRequires:  openresty-pcre-devel >= 8.40-1
+BuildRequires:  openresty-openssl-debug-devel >= 1.1.0h-1
+BuildRequires:  openresty-pcre-devel >= 8.42-1
 Requires:       openresty-zlib >= 1.2.11-3
-Requires:       openresty-openssl-debug >= 1.0.2k-1
-Requires:       openresty-pcre >= 8.40-1
+Requires:       openresty-openssl-debug >= 1.1.0h-1
+Requires:       openresty-pcre >= 8.42-1
 
 AutoReqProv:        no
 
@@ -29,6 +29,11 @@ AutoReqProv:        no
 %define openssl_prefix      %{orprefix}/openssl
 %define zlib_prefix         %{_usr}/local/openresty/zlib
 %define pcre_prefix         %{_usr}/local/openresty/pcre
+
+%if 0%{?fedora} >= 27
+%undefine _debugsource_packages
+%undefine _debuginfo_subpackages
+%endif
 
 
 %description
@@ -68,6 +73,7 @@ a single box.
     --without-lua_rds_parser \
     --with-stream \
     --with-stream_ssl_module \
+    --with-stream_ssl_preread_module \
     --with-http_v2_module \
     --without-mail_pop3_module \
     --without-mail_imap_module \
@@ -85,7 +91,6 @@ a single box.
     --with-http_mp4_module \
     --with-http_gunzip_module \
     --with-threads \
-    --with-file-aio \
     --with-poll_module \
     --with-luajit-xcflags='-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT -O0' \
     --with-dtrace-probes \
@@ -137,6 +142,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu May 16 2019 Yichun Zhang (agentzh) 1.15.8.1-1
+- upgraded openresty to 1.15.8.1.
+* Mon May 14 2018 Yichun Zhang (agentzh) 1.13.6.2-1
+- upgraded openresty to 1.13.6.2.
 * Sun Nov 12 2017 Yichun Zhang (agentzh) 1.13.6.1-1
 - upgraded openresty to 1.13.6.1.
 * Thu Sep 21 2017 Yichun Zhang (agentzh) 1.11.2.5-2
