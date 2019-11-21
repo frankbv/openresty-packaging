@@ -1,6 +1,6 @@
 Name:           openresty-asan
-Version:        1.15.8.1
-Release:        1%{?dist}
+Version:        1.15.8.2
+Release:        3%{?dist}
 Summary:        The clang AddressSanitizer (ASAN) version of OpenResty
 
 Group:          System Environment/Daemons
@@ -15,7 +15,7 @@ Source0:        https://openresty.org/download/openresty-%{version}.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  make, perl, systemtap-sdt-devel, clang, valgrind-devel
+BuildRequires:  ccache, make, perl, systemtap-sdt-devel, clang, valgrind-devel
 
 BuildRequires:  perl-File-Temp
 BuildRequires:  openresty-zlib-asan-devel >= 1.2.11-6
@@ -37,14 +37,29 @@ AutoReqProv:        no
 %undefine _missing_build_ids_terminate_build
 %endif
 
+# Remove source code from debuginfo package.
+%define __debug_install_post \
+  %{_rpmconfigdir}/find-debuginfo.sh %{?_missing_build_ids_terminate_build:--strict-build-id} %{?_find_debuginfo_opts} "%{_builddir}/%{?buildsubdir}"; \
+  rm -rf "${RPM_BUILD_ROOT}/usr/src/debug"; \
+  mkdir -p "${RPM_BUILD_ROOT}/usr/src/debug/openresty-%{version}"; \
+  mkdir -p "${RPM_BUILD_ROOT}/usr/src/debug/tmp"; \
+  mkdir -p "${RPM_BUILD_ROOT}/usr/src/debug/builddir"; \
+%{nil}
+
 %if 0%{?fedora} >= 27
 %undefine _debugsource_packages
 %undefine _debuginfo_subpackages
 %endif
 
-%if 0%{?fedora} >= 28
-BuildRequires:      compiler-rt
+%if 0%{?rhel} >= 8
+%undefine _debugsource_packages
+%undefine _debuginfo_subpackages
 %endif
+
+
+#%if 0%{?fedora} >= 28
+#BuildRequires:      compiler-rt
+#%endif
 
 
 %description
@@ -79,7 +94,7 @@ export ASAN_OPTIONS=detect_leaks=0
 ./configure \
     --prefix="%{orprefix}" \
     --with-debug \
-    --with-cc="clang -fsanitize=address" \
+    --with-cc="ccache clang -fsanitize=address -fcolor-diagnostics -Qunused-arguments" \
     --with-cc-opt="-I%{zlib_prefix}/include -I%{pcre_prefix}/include -I%{openssl_prefix}/include -O1" \
     --with-ld-opt="-L%{zlib_prefix}/lib -L%{pcre_prefix}/lib -L%{openssl_prefix}/lib -Wl,-rpath,%{zlib_prefix}/lib:%{pcre_prefix}/lib:%{openssl_prefix}/lib" \
     --with-pcre-jit \
@@ -158,6 +173,8 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Aug 29 2019 Yichun Zhang (agentzh) 1.15.8.2-1
+- upgraded openresty to 1.15.8.2.
 * Thu May 16 2019 Yichun Zhang (agentzh) 1.15.8.1-1
 - upgraded openresty to 1.15.8.1.
 * Mon May 14 2018 Yichun Zhang (agentzh) 1.13.6.2-1

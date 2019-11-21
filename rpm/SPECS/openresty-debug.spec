@@ -1,6 +1,6 @@
 Name:           openresty-debug
-Version:        1.15.8.1
-Release:        1%{?dist}
+Version:        1.15.8.2
+Release:        2%{?dist}
 Summary:        The debug version of OpenResty
 
 Group:          System Environment/Daemons
@@ -15,7 +15,7 @@ Source0:        https://openresty.org/download/openresty-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  perl-File-Temp
-BuildRequires:  gcc, make, perl, systemtap-sdt-devel
+BuildRequires:  ccache, gcc, make, perl, systemtap-sdt-devel
 BuildRequires:  openresty-zlib-devel >= 1.2.11-3
 BuildRequires:  openresty-openssl-debug-devel >= 1.1.0h-1
 BuildRequires:  openresty-pcre-devel >= 8.42-1
@@ -30,7 +30,21 @@ AutoReqProv:        no
 %define zlib_prefix         %{_usr}/local/openresty/zlib
 %define pcre_prefix         %{_usr}/local/openresty/pcre
 
+# Remove source code from debuginfo package.
+%define __debug_install_post \
+  %{_rpmconfigdir}/find-debuginfo.sh %{?_missing_build_ids_terminate_build:--strict-build-id} %{?_find_debuginfo_opts} "%{_builddir}/%{?buildsubdir}"; \
+  rm -rf "${RPM_BUILD_ROOT}/usr/src/debug"; \
+  mkdir -p "${RPM_BUILD_ROOT}/usr/src/debug/openresty-%{version}"; \
+  mkdir -p "${RPM_BUILD_ROOT}/usr/src/debug/tmp"; \
+  mkdir -p "${RPM_BUILD_ROOT}/usr/src/debug/builddir"; \
+%{nil}
+
 %if 0%{?fedora} >= 27
+%undefine _debugsource_packages
+%undefine _debuginfo_subpackages
+%endif
+
+%if 0%{?rhel} >= 8
 %undefine _debugsource_packages
 %undefine _debuginfo_subpackages
 %endif
@@ -64,6 +78,7 @@ a single box.
 %build
 ./configure \
     --prefix="%{orprefix}" \
+    --with-cc='ccache gcc -fdiagnostics-color=always' \
     --with-debug \
     --with-cc-opt="-I%{zlib_prefix}/include -I%{pcre_prefix}/include -I%{openssl_prefix}/include -O0" \
     --with-ld-opt="-L%{zlib_prefix}/lib -L%{pcre_prefix}/lib -L%{openssl_prefix}/lib -Wl,-rpath,%{zlib_prefix}/lib:%{pcre_prefix}/lib:%{openssl_prefix}/lib" \
@@ -142,6 +157,8 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Aug 29 2019 Yichun Zhang (agentzh) 1.15.8.2-1
+- upgraded openresty to 1.15.8.2.
 * Thu May 16 2019 Yichun Zhang (agentzh) 1.15.8.1-1
 - upgraded openresty to 1.15.8.1.
 * Mon May 14 2018 Yichun Zhang (agentzh) 1.13.6.2-1

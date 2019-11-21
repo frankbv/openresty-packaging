@@ -1,17 +1,17 @@
 Name:               openresty-pcre
-Version:            8.42
-Release:            1%{?dist}
+Version:            8.43
+Release:            2%{?dist}
 Summary:            Perl-compatible regular expression library for OpenResty
 
 Group:              System Environment/Libraries
 
 License:            BSD
 URL:                http://www.pcre.org/
-Source0:            ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-%{version}.tar.bz2
+Source0:            https://ftp.pcre.org/pub/pcre/pcre-%{version}.tar.bz2
 
 BuildRoot:          %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:      libtool
+BuildRequires:      ccache, libtool
 
 AutoReqProv:        no
 
@@ -37,8 +37,12 @@ Development files for Perl-compatible regular expression library for use by Open
 
 
 %build
+
+export CC="ccache gcc -fdiagnostics-color=always"
+
 ./configure \
   --prefix=%{pcre_prefix} \
+  --libdir=%{pcre_prefix}/lib \
   --disable-cpp \
   --enable-jit \
   --enable-utf \
