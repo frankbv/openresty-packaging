@@ -45,7 +45,7 @@ override_dh_auto_configure:
 
 override_dh_installinit:
 	dh_systemd_enable -popenresty-no-sse42 --name=openresty openresty.service
-	dh_installinit -popenresty-no-sse42
+	dh_installinit -popenresty-no-sse42 --name=openresty
 	dh_systemd_start -popenresty-no-sse42
 
 override_dh_usrlocal:
