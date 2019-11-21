@@ -48,6 +48,7 @@ Recommends: openresty-resty, openresty-opm
 Suggests: openresty-restydoc
 Depends: ${shlibs:Depends}, ${misc:Depends},
  openresty-zlib, openresty-openssl (>= 1.1.0h), openresty-pcre (>= 8.42)
+Conflicts: openresty-no-sse42
 Description: core server of OpenResty for production use
  This package contains the core server for OpenResty. Built for production
  uses.
@@ -85,5 +86,6 @@ Package: openresty-dbgsym
 Section: debug
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, openresty
+Conflicts: openresty-no-sse42-dbgsym
 Description: Debug symbols of OpenResty packages
  Debug symbols of OpenResty packages
