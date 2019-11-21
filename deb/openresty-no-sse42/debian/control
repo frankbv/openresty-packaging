@@ -1,4 +1,4 @@
-Source: openresty
+Source: openresty-no-sse42
 Section: httpd
 Priority: optional
 Maintainer: OpenResty Admin <admin@openresty.com>

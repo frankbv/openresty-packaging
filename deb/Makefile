@@ -163,13 +163,13 @@ openresty-clean:
 openresty-no-sse42-download:
 	rm -f *.orig.tar.*
 	wget -nH --cut-dirs=100 --mirror 'https://openresty.org/download/openresty-$(OR_VER).tar.gz'
-	cp openresty-$(OR_VER).tar.gz openresty_$(OR_VER).orig.tar.gz
+	cp openresty-$(OR_VER).tar.gz openresty-no-sse42_$(OR_VER).orig.tar.gz
 
 .PHONY: openresty-no-sse42-build
 openresty-no-sse42-build: | openresty-no-sse42-clean openresty-no-sse42-download
 	sudo apt-get -y -qq install openresty-zlib-dev openresty-pcre-dev openresty-openssl-dev
 	rm -f *.deb *.debian.tar.xz *.dsc *.changes
-	tar xf openresty_$(OR_VER).orig.tar.gz --strip-components=1 -C openresty-no-sse42
+	tar xf openresty-no-sse42_$(OR_VER).orig.tar.gz --strip-components=1 -C openresty-no-sse42
 	cd openresty-no-sse42 \
 		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
         && ../frank_changelog.sh \
