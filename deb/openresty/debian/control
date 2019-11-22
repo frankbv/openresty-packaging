@@ -13,7 +13,7 @@ Package: openresty-resty
 Section: utils
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends},
- openresty (>= ${source:Upstream-Version}) | openresty-no-sse42 (>= ${source:Upstream-Version}),
+ openresty (>= ${source:Upstream-Version}),
  perl, libfile-spec-perl, libfile-temp-perl, libtime-hires-perl
 Description: resty command-line utility for OpenResty
  This package contains the "resty" command-line utility for OpenResty, which
@@ -30,9 +30,8 @@ Package: openresty-opm
 Section: utils
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
- openresty (>= ${source:Upstream-Version}) | openresty-no-sse42 (>= ${source:Upstream-Version}),
- openresty-resty (>= ${source:Upstream-Version}), curl, tar, gzip, libdigest-md5-perl, libencode-perl,
- libfile-spec-perl, libfile-temp-perl
+ openresty (>= ${source:Upstream-Version}), openresty-resty (>= ${source:Upstream-Version}),
+ curl, tar, gzip, libdigest-md5-perl, libencode-perl, libfile-spec-perl, libfile-temp-perl
 Description: OpenResty Package Manager (OPM)
  This package provides the client side tool, opm, for OpenResty Pakcage Manager
  (OPM).
@@ -49,7 +48,6 @@ Recommends: openresty-resty, openresty-opm
 Suggests: openresty-restydoc
 Depends: ${shlibs:Depends}, ${misc:Depends},
  openresty-zlib, openresty-openssl (>= 1.1.0h), openresty-pcre (>= 8.42)
-Conflicts: openresty-no-sse42
 Description: core server of OpenResty for production use
  This package contains the core server for OpenResty. Built for production
  uses.
@@ -87,6 +85,5 @@ Package: openresty-dbgsym
 Section: debug
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, openresty
-Conflicts: openresty-no-sse42-dbgsym
 Description: Debug symbols of OpenResty packages
  Debug symbols of OpenResty packages

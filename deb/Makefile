@@ -20,18 +20,19 @@ DISTRO:=$(shell lsb_release -c|awk '{print $$2}')
 
 .PHONY: build
 build: dependencies zlib-build pcre-build openssl-build \
-	openssl-debug-build openresty-build openresty-no-sse42-build \
-	openresty-debug-build openresty-valgrind-build \
-	lemplate-build test-nginx-build
+	openssl-debug-build openresty-build openresty-debug-build \
+	openresty-valgrind-build lemplate-build test-nginx-build
 
 .PHONY: clean
 clean: zlib-clean pcre-clean openssl-clean openssl-debug-clean \
-	openresty-clean openresty-no-sse42-clean openresty-debug-clean \
-	openresty-valgrind-clean lemplate-clean test-nginx-clean
+	openresty-clean openresty-debug-clean openresty-valgrind-clean \
+	lemplate-clean test-nginx-clean
 
 .PHONY: dependencies
 dependencies:
-	apt-get install -y libtemplate-perl dh-systemd systemtap-sdt-dev perl gnupg curl make build-essential dh-make bzr-builddeb
+	apt-get install -y libtemplate-perl dh-systemd \
+		systemtap-sdt-dev perl gnupg curl make build-essential \
+		dh-make bzr-builddeb
 	apt-get install -y autotools-dev sudo dos2unix mercurial
 
 .PHONY: zlib-download
@@ -158,30 +159,6 @@ openresty-clean:
 	find openresty -maxdepth 1 ! -name 'debian' ! -name 'openresty' -print | xargs rm -rf
 	rm -f openresty*.deb
 	rm -f openresty_*.*
-
-.PHONY: openresty-no-sse42-download
-openresty-no-sse42-download:
-	rm -f *.orig.tar.*
-	wget -nH --cut-dirs=100 --mirror 'https://openresty.org/download/openresty-$(OR_VER).tar.gz'
-	cp openresty-$(OR_VER).tar.gz openresty-no-sse42_$(OR_VER).orig.tar.gz
-
-.PHONY: openresty-no-sse42-build
-openresty-no-sse42-build: | openresty-no-sse42-clean openresty-no-sse42-download
-	sudo apt-get -y -qq install openresty-zlib-dev openresty-pcre-dev openresty-openssl-dev
-	rm -f *.deb *.debian.tar.xz *.dsc *.changes
-	tar xf openresty-no-sse42_$(OR_VER).orig.tar.gz --strip-components=1 -C openresty-no-sse42
-	cd openresty-no-sse42 \
-		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
-        && ../frank_changelog.sh \
-		&& debuild $(OPTS) -j$(JOBS)
-	if [ -f ./upload ]; then ./upload || exit 1; fi
-
-.PHONY: openresty-no-sse42-clean
-openresty-no-sse42-clean:
-	cd openresty-no-sse42 && debclean
-	find openresty-no-sse42 -maxdepth 1 ! -name 'debian' ! -name 'openresty-no-sse42' -print | xargs rm -rf
-	rm -f openresty-no-sse42*.deb
-	rm -f openresty-no-sse42_*.*
 
 .PHONY: openresty-debug-download
 openresty-debug-download:
