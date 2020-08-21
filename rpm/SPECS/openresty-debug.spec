@@ -1,6 +1,6 @@
 Name:           openresty-debug
-Version:        1.15.8.2
-Release:        2%{?dist}
+Version:        1.17.8.2
+Release:        1%{?dist}
 Summary:        The debug version of OpenResty
 
 Group:          System Environment/Daemons
@@ -17,16 +17,16 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  perl-File-Temp
 BuildRequires:  ccache, gcc, make, perl, systemtap-sdt-devel
 BuildRequires:  openresty-zlib-devel >= 1.2.11-3
-BuildRequires:  openresty-openssl-debug-devel >= 1.1.0h-1
-BuildRequires:  openresty-pcre-devel >= 8.42-1
+BuildRequires:  openresty-openssl111-debug-devel >= 1.1.1g-3
+BuildRequires:  openresty-pcre-devel >= 8.44-1
 Requires:       openresty-zlib >= 1.2.11-3
-Requires:       openresty-openssl-debug >= 1.1.0h-1
-Requires:       openresty-pcre >= 8.42-1
+Requires:       openresty-openssl111-debug >= 1.1.1g-3
+Requires:       openresty-pcre >= 8.44-1
 
 AutoReqProv:        no
 
 %define orprefix            %{_usr}/local/%{name}
-%define openssl_prefix      %{orprefix}/openssl
+%define openssl_prefix      %{orprefix}/openssl111
 %define zlib_prefix         %{_usr}/local/openresty/zlib
 %define pcre_prefix         %{_usr}/local/openresty/pcre
 
@@ -107,8 +107,8 @@ a single box.
     --with-http_gunzip_module \
     --with-threads \
     --with-poll_module \
+    --with-compat \
     --with-luajit-xcflags='-DLUAJIT_NUMMODE=2 -DLUAJIT_ENABLE_LUA52COMPAT -O0' \
-    --with-dtrace-probes \
     %{?_smp_mflags}
 
 make %{?_smp_mflags}
@@ -151,12 +151,15 @@ rm -rf %{buildroot}
 %{orprefix}/nginx/html/*
 %{orprefix}/nginx/logs/
 %{orprefix}/nginx/sbin/*
-%{orprefix}/nginx/tapset/*
 %config(noreplace) %{orprefix}/nginx/conf/*
 %{orprefix}/COPYRIGHT
 
 
 %changelog
+* Mon Jul 13 2020 Yichun Zhang (agentzh) 1.17.8.2-1
+- upgraded openresty to 1.17.8.2.
+* Fri Jul 3 2020 Yichun Zhang (agentzh) 1.17.8.1-1
+- upgraded openresty to 1.17.8.1.
 * Thu Aug 29 2019 Yichun Zhang (agentzh) 1.15.8.2-1
 - upgraded openresty to 1.15.8.2.
 * Thu May 16 2019 Yichun Zhang (agentzh) 1.15.8.1-1
