@@ -1,9 +1,8 @@
-diff --git a/configure b/configure
-index ccf5f9b..be6fcdd 100755
---- a/configure
-+++ b/configure
-@@ -727,51 +727,6 @@ _END_
-             $luajit_xcflags .= " -DLUAJIT_ENABLE_GC64";
+diff -ruN openresty-1.17.8.2.orig/configure openresty-1.17.8.2/configure
+--- openresty-1.17.8.2.orig/configure	2020-07-13 17:55:53.000000000 +0000
++++ openresty-1.17.8.2/configure	2020-08-21 21:59:15.664598067 +0000
+@@ -739,51 +739,6 @@
+             $luajit_xcflags .= " -DLUAJIT_DISABLE_GC64";
          }
  
 -        if (!$user_luajit_xcflags
@@ -51,6 +50,6 @@ index ccf5f9b..be6fcdd 100755
 -            }
 -        }
 -
-         if ($opts->{debug}) {
-             $luajit_xcflags .= " -DLUA_USE_APICHECK -DLUA_USE_ASSERT";
- 
+         if ($platform eq 'macosx') {
+             # to work around a bug in the Xcode toolchain in macOS 11.15:
+             # https://github.com/openresty/homebrew-brew/issues/10

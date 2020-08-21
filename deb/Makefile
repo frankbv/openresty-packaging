@@ -21,12 +21,13 @@ DISTRO:=$(shell lsb_release -c|awk '{print $$2}')
 
 .PHONY: build
 build: dependencies zlib-build pcre-build openssl-build \
-	openssl-debug-build openresty-build openresty-debug-build \
+	openssl-debug-build openssl111-build openssl111-debug-build \
+	openresty-build openresty-debug-build \
 	openresty-valgrind-build lemplate-build test-nginx-build
 
 .PHONY: clean
-clean: zlib-clean pcre-clean openssl-clean openssl-debug-clean \
-	openresty-clean openresty-debug-clean openresty-valgrind-clean \
+clean: zlib-clean pcre-clean openssl-clean openssl-debug-clean openssl111-clean \
+	openssl111-debug-clean openresty-clean openresty-debug-clean openresty-valgrind-clean \
 	lemplate-clean test-nginx-clean
 
 .PHONY: dependencies
@@ -151,9 +152,10 @@ openssl111-build: | openssl111-clean openssl111-download
 	tar xf openresty-openssl111_$(SSL111_VER).orig.tar.gz --strip-components=1 -C openresty-openssl111
 	cd openresty-openssl111 \
 		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
+        && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
-	#for f in openresty-openssl111*.deb; do debsigs --sign=origin -K D5EDEB74 $$f || exit 1; done
 	if [ -f ./upload ]; then ./upload || exit 1; fi
+	sudo dpkg -i debfiles/openresty-openssl111*.deb
 
 .PHONY: openssl111-debug-download
 openssl111-debug-download:
@@ -169,9 +171,10 @@ openssl111-debug-build: | openssl111-debug-clean openssl111-debug-download
 	tar xf openresty-openssl111-debug_$(SSL111_VER).orig.tar.gz --strip-components=1 -C openresty-openssl111-debug
 	cd openresty-openssl111-debug \
 		&& tpage --define distro=$(DISTRO) debian/changelog.tt2 > debian/changelog \
+        && ../frank_changelog.sh \
 		&& debuild -sa $(OPTS) -j$(JOBS)
-	#for f in openresty-openssl111-debug*.deb; do debsigs --sign=origin -K D5EDEB74 $$f || exit 1; done
 	if [ -f ./upload ]; then ./upload || exit 1; fi
+	sudo dpkg -i debfiles/openresty-openssl111*.deb
 
 .PHONY: openssl111-clean
 openssl111-clean:
@@ -311,4 +314,7 @@ test-nginx-build: | test-nginx-clean test-nginx-download
 		&& debuild -sa $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
 
+scp:
+	ssh debian@debian.frank.work "mkdir -p /srv/debian/openresty/pool/$(SCHROOT_CHROOT_NAME); rm -rf /srv/debian/openresty/pool/$(SCHROOT_CHROOT_NAME)/*"; \
+	scp debfiles/* debian@debian.frank.work:/srv/debian/openresty/pool/$(SCHROOT_CHROOT_NAME)/
 ### Makefile ends here
