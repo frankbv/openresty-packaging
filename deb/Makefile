@@ -31,10 +31,10 @@ clean: zlib-clean pcre-clean openssl-clean openssl-debug-clean \
 
 .PHONY: dependencies
 dependencies:
-	apt-get install -y libtemplate-perl dh-systemd \
+	sudo apt-get install -y libtemplate-perl dh-systemd \
 		systemtap-sdt-dev perl gnupg curl make build-essential \
 		dh-make bzr-builddeb
-	apt-get install -y autotools-dev sudo dos2unix mercurial
+	sudo apt-get install -y autotools-dev sudo dos2unix mercurial
 
 .PHONY: zlib-download
 zlib-download:
@@ -52,7 +52,7 @@ zlib-build: | zlib-clean zlib-download
         && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
-	dpkg -i debfiles/openresty-zlib*.deb
+	sudo dpkg -i debfiles/openresty-zlib*.deb
 
 .PHONY: zlib-clean
 zlib-clean:
@@ -77,7 +77,7 @@ pcre-build: | pcre-clean pcre-download
         && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
-	dpkg -i debfiles/openresty-pcre*.deb
+	sudo dpkg -i debfiles/openresty-pcre*.deb
 
 .PHONY: pcre-clean
 pcre-clean:
@@ -103,7 +103,7 @@ openssl-build: | openssl-clean openssl-download
         && ../frank_changelog.sh \
 		&& debuild $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
-	dpkg -i debfiles/openresty-openssl*.deb
+	sudo dpkg -i debfiles/openresty-openssl*.deb
 
 .PHONY: openssl-debug-download
 openssl-debug-download:
@@ -121,7 +121,7 @@ openssl-debug-build: | openssl-debug-clean openssl-debug-download
         && ../frank_changelog.sh \
 		&& debuild -sa $(OPTS) -j$(JOBS)
 	if [ -f ./upload ]; then ./upload || exit 1; fi
-	dpkg -i debfiles/openresty-openssl*.deb
+	sudo dpkg -i debfiles/openresty-openssl*.deb
 
 .PHONY: openssl-clean
 openssl-clean:
