@@ -29,6 +29,7 @@ build: dependencies zlib-build pcre-build openssl-build \
 clean: zlib-clean pcre-clean openssl-clean openssl-debug-clean openssl111-clean \
 	openssl111-debug-clean openresty-clean openresty-debug-clean openresty-valgrind-clean \
 	lemplate-clean test-nginx-clean
+	rm -rf debfiles
 
 .PHONY: dependencies
 dependencies:
